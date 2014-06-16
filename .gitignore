@@ -8,12 +8,14 @@
 *.gcda
 *.gch
 *.gcno
+*.ilk
 *.la
 *.lib
+*.dylib
 *.lo
 *.o
 *.obj
-lib*.so
+*.so
 
 *.gc.log
 .dirstamp
