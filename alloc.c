@@ -64,6 +64,12 @@ word GC_non_gc_bytes = 0;  /* Number of bytes not intended to be collected */
 
 word GC_gc_no = 0;
 
+GC_bool         GC_mercury_calc_gc_time = 0;
+			   /* Accumulate total gc time  in      */
+			   /* GC_total_gc_time if set to true.  */
+unsigned long 	GC_total_gc_time = 0;
+			   /* Measured in milliseconds.         */
+
 #ifndef GC_DISABLE_INCREMENTAL
   GC_INNER GC_bool GC_incremental = FALSE; /* By default, stop the world. */
 #endif
@@ -460,8 +466,9 @@ GC_INNER GC_bool GC_try_to_collect_inner(GC_stop_func stop_func)
     }
     GC_notify_full_gc();
 #   ifndef SMALL_CONFIG
-      if (GC_print_stats) {
+      if (GC_print_stats || GC_mercury_calc_gc_time) {
         GET_TIME(start_time);
+	if (GC_print_stats)
         GC_log_printf("Initiating full world-stop collection!\n");
       }
 #   endif
@@ -501,12 +508,19 @@ GC_INNER GC_bool GC_try_to_collect_inner(GC_stop_func stop_func)
     }
     GC_finish_collection();
 #   ifndef SMALL_CONFIG
-      if (GC_print_stats) {
+      if (GC_print_stats || GC_mercury_calc_gc_time) {
         CLOCK_TYPE current_time;
+        unsigned long cur_gc_time;
 
         GET_TIME(current_time);
-        GC_log_printf("Complete collection took %lu msecs\n",
-                      MS_TIME_DIFF(current_time,start_time));
+        cur_gc_time = MS_TIME_DIFF(current_time,start_time);
+        if (GC_print_stats) {
+            GC_log_printf("Complete collection took %lu msecs\n",
+                 cur_gc_time);
+        }
+        if (GC_mercury_calc_gc_time) {
+            GC_total_gc_time += cur_gc_time;
+        }
       }
 #   endif
     if (GC_on_collection_event)
