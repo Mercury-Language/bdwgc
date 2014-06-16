@@ -412,6 +412,27 @@ struct GC_timeval_s {
   unsigned long tv_nsec;/* nanoseconds fraction (<1000000) */
 };
 
+/*
+ * Callbacks for mercury to notify the runtime of certain events.
+ */
+GC_API void (*GC_mercury_callback_start_collect)(void);
+                /* Starting a collection */
+GC_API void (*GC_mercury_callback_stop_collect)(void);
+                /* Stopping a collection */
+GC_API void (*GC_mercury_callback_pause_thread)(void);
+                /*
+                 * This thread is about to be paused.
+                 *
+                 * Use these with care!  They're called from a signal handler,
+                 * they must NOT allocate memory and if they do locking they
+                 * must use reentrant mutexes.  Also note that these do not
+                 * work on OS X/Darwin.  On Darwin the world is stopped in a
+                 * different way, we can't easily add support for these
+                 * callbacks on Darwin. 
+                 */
+GC_API void (*GC_mercury_callback_resume_thread)(void);
+                /* This thread is about to be resumed */
+
 /* Public procedures */
 
 /* Set/get the time limit of the incremental collections.  This is      */

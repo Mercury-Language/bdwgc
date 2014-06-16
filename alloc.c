@@ -86,6 +86,11 @@ word GC_gc_no = 0;
   }
 #endif /* !NO_CLOCK */
 
+void (*GC_mercury_callback_start_collect)(void) = NULL;
+void (*GC_mercury_callback_stop_collect)(void) = NULL;
+void (*GC_mercury_callback_pause_thread)(void) = NULL;
+void (*GC_mercury_callback_resume_thread)(void) = NULL;
+
 #ifndef GC_DISABLE_INCREMENTAL
   GC_INNER GC_bool GC_incremental = FALSE; /* By default, stop the world. */
   STATIC GC_bool GC_should_start_incremental_collection = FALSE;
@@ -621,6 +626,9 @@ GC_INNER GC_bool GC_try_to_collect_inner(GC_stop_func stop_func)
     GC_clear_marks();
     SAVE_CALLERS_TO_LAST_STACK();
     GC_is_full_gc = TRUE;
+    if (GC_mercury_callback_start_collect) {
+      GC_mercury_callback_start_collect();
+    }
     if (!GC_stopped_mark(stop_func)) {
       if (!GC_incremental) {
         /* We're partially done and have no way to complete or use      */
@@ -656,6 +664,9 @@ GC_INNER GC_bool GC_try_to_collect_inner(GC_stop_func stop_func)
                         time_diff, ns_frac_diff);
       }
 #   endif
+    if (GC_mercury_callback_stop_collect) {
+      GC_mercury_callback_stop_collect();
+    }
     if (GC_on_collection_event)
       GC_on_collection_event(GC_EVENT_END);
     return(TRUE);
