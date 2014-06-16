@@ -396,6 +396,27 @@ GC_API GC_ATTR_DEPRECATED unsigned long GC_time_limit;
 GC_API void GC_CALL GC_set_time_limit(unsigned long);
 GC_API unsigned long GC_CALL GC_get_time_limit(void);
 
+/*
+ * Callbacks for mercury to notify the runtime of certain events.
+ */
+GC_API void (*GC_mercury_callback_start_collect)(void);
+                /* Starting a collection */
+GC_API void (*GC_mercury_callback_stop_collect)(void);
+                /* Stopping a collection */
+GC_API void (*GC_mercury_callback_pause_thread)(void);
+                /*
+                 * This thread is about to be paused.
+                 *
+                 * Use these with care!  They're called from a signal handler,
+                 * they must NOT allocate memory and if they do locking they
+                 * must use reentrant mutexes.  Also note that these do not
+                 * work on OS X/Darwin.  On Darwin the world is stopped in a
+                 * different way, we can't easily add support for these
+                 * callbacks on Darwin. 
+                 */
+GC_API void (*GC_mercury_callback_resume_thread)(void);
+                /* This thread is about to be resumed */
+
 /* Public procedures */
 
 /* Tell the collector to start various performance measurements.        */
