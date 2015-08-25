@@ -460,8 +460,10 @@ threadlibs$(EXEEXT): $(srcdir)/tools/threadlibs.c \
   $(srcdir)/include/private/gcconfig.h
 	$(HOSTCC) $(HOSTCFLAGS) -o threadlibs$(EXEEXT) $(srcdir)/tools/threadlibs.c
 
-if_not_there$(EXEEXT): $(srcdir)/tools/if_not_there.c
-	$(HOSTCC) $(HOSTCFLAGS) -o if_not_there$(EXEEXT) $(srcdir)/tools/if_not_there.c
+# Mercury-specific: use a shell script instead of if_not_there.c
+if_not_there: $(srcdir)/tools/if_not_there.sh
+	cp $< $@
+	chmod +x $@
 
 clean:
 	rm -f *.a *.i *.o *.exe tests/*.o gctest gctest_dyn_link test_cpp \
