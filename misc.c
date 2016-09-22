@@ -2583,3 +2583,24 @@ GC_API void GC_CALL GC_abort_on_oom(void)
     UNLOCK();
   }
 #endif /* THREADS */
+
+GC_API void GC_CALL GC_mercury_write_size_map(FILE *fp)
+{
+    #if defined(_WIN32)
+        SSIZE_T bytes;
+        SSIZE_T limit;
+    #else
+        ssize_t bytes;
+        ssize_t limit;
+    #endif
+
+    for (limit = MAXOBJBYTES; limit >= 0; limit--) {
+	if (GC_size_map[limit] != 0) {
+	    break;
+	}
+    }
+
+    for (bytes = 1; bytes <= limit; bytes += BYTES_PER_WORD) {
+	fprintf(fp, " %d", (int)GRANULES_TO_WORDS(GC_size_map[bytes]));
+    }
+}
