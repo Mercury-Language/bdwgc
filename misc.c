@@ -34,6 +34,8 @@
 # endif
 # define NOSERVICE
 # include <windows.h>
+/* Mercury-specific: avoid linking with user32.dll */
+#define DONT_USE_USER32_DLL
 #endif
 
 #if defined(UNIX_LIKE) || defined(CYGWIN32) || defined(SYMBIAN)
