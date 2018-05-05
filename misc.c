@@ -14,6 +14,9 @@
  * modified is included with the above copyright notice.
  */
 
+/* Mercury-specific: avoid linking with user32.dll */
+#define DONT_USE_USER32_DLL
+
 #include "private/gc_pmark.h"
 
 #include <stdio.h>
