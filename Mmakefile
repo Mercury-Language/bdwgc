@@ -69,7 +69,7 @@ submake: force
 else
 submake: force
 	MAKEFLAGS=""; export MAKEFLAGS; \
-	nmake -f NT_MAKEFILE cdebug="$(CDEBUG)" nodebug=1 gc.lib; \
+	nmake -f NT_MAKEFILE cdebug="$(CDEBUG)" nodebug=1 CPU=x86 MAKE_AS_LIB=1 gc.lib; \
 	cp gc.lib lib$(GC_GRADE).lib
 endif
 
