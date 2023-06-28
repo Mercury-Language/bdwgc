@@ -1,5 +1,6 @@
 #-----------------------------------------------------------------------------#
 # Copyright (C) 1995-2004, 2006-2007, 2010, 2012 The University of Melbourne.
+# Copyright (C) 2014, 2019, 2022-2023 The Mercury team.
 # This file may only be copied under the terms of the GNU General
 # Public Licence - see the file COPYING in the Mercury distribution.
 #-----------------------------------------------------------------------------#
@@ -20,11 +21,11 @@ include $(MERCURY_DIR)/Mmake.common
 
 .PHONY: lib$(GC_GRADE)
 
-ifneq ("$(filter nogc mps,$(GC_GRADE))","")
+ifneq ("$(filter nogc,$(GC_GRADE))","")
 
 # No need to build the Boehm garbage collector for grades which don't use it
 # (this includes the .NET and Java backends, and for the C backend
-# grades with `--gc none', `--gc mps', or `--gc accurate').
+# grades with `--gc none' or `--gc accurate').
 
 lib$(GC_GRADE):
 
@@ -67,7 +68,7 @@ endif
 # no difference between gc.lib and par_gc.lib.
 submake: force
 	MAKEFLAGS=""; export MAKEFLAGS; \
-	nmake -f NT_MAKEFILE cdebug="$(CDEBUG)" nodebug=1 CPU=x86 ENABLE_STATIC=1 gc.lib; \
+	nmake -f NT_MAKEFILE cdebug="$(CDEBUG)" nodebug=1 CPU="$(BOEHM_WINDOWS_CPU_TYPE)" ENABLE_STATIC=1 gc.lib; \
 	cp gc.lib lib$(GC_GRADE).lib
 
 clean_local:
@@ -169,7 +170,7 @@ install_dirs:
 	-[ -d $(INSTALL_MERC_GC_LIB_DIR) ] || \
 		mkdir -p $(INSTALL_MERC_GC_LIB_DIR)
 
-ifneq ("$(filter nogc mps,$(GC_GRADE))","")
+ifneq ("$(filter nogc,$(GC_GRADE))","")
 
 # No need to install the Boehm collector for grades which don't use it.
 
