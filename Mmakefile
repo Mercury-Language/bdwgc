@@ -61,17 +61,14 @@ else
   CDEBUG=
 endif
 
-ifeq ("$(GC_GRADE)", "par_gc")
+# NOTE: This used to use gc.mak for par_gc but that file was removed in v8.2.
+# Now we use NT_MAKEFILE for both gc and par_gc. Thread support is enabled by
+# default in NT_MAKEFILE so unless we pass disable_threads=1, there should be
+# no difference between gc.lib and par_gc.lib.
 submake: force
 	MAKEFLAGS=""; export MAKEFLAGS; \
-	TMP=. nmake -f "gc.mak" CFG="gc - Win32 Release"
-	mv Release/libpar_gc.dll Release/libpar_gc.lib .
-else
-submake: force
-	MAKEFLAGS=""; export MAKEFLAGS; \
-	nmake -f NT_MAKEFILE cdebug="$(CDEBUG)" nodebug=1 gc.lib; \
+	nmake -f NT_MAKEFILE cdebug="$(CDEBUG)" nodebug=1 CPU=x86 ENABLE_STATIC=1 gc.lib; \
 	cp gc.lib lib$(GC_GRADE).lib
-endif
 
 clean_local:
 	rm -rf Release/ Debug/
