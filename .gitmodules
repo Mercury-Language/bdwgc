@@ -1,6 +1,6 @@
 [submodule "libatomic_ops"]
 	path = libatomic_ops
 	url = ../libatomic_ops.git
-	branch = release-7_6-mercury
+	branch = release-7_8-mercury
 	ignore = dirty
 	update = checkout
