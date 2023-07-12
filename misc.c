@@ -14,6 +14,8 @@
  * modified is included with the above copyright notice.
  */
 
+/* Mercury-specific: don't pop up MessageBox on error */
+#define NO_MSGBOX_ON_ERROR
 /* Mercury-specific: avoid linking with user32.dll */
 #define DONT_USE_USER32_DLL
 
