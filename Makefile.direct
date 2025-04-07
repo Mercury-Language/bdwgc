@@ -144,7 +144,18 @@ OBJS= alloc.o reclaim.o allchblk.o misc.o mach_dep.o os_dep.o mark_rts.o \
   malloc.o checksums.o pthread_support.o pthread_stop_world.o \
   darwin_stop_world.o typd_mlc.o ptr_chck.o mallocx.o gcj_mlc.o specific.o \
   gc_dlopen.o backgraph.o win32_threads.o pthread_start.o \
-  thread_local_alloc.o fnlz_mlc.o atomic_ops.o atomic_ops_sysdeps.o
+  thread_local_alloc.o fnlz_mlc.o atomic_ops.o
+
+# Mercury-specific: atomic_ops_sysdeps.o will be empty (devoid of sections)
+# except when targeting Solaris/SPARC with a compiler other than GCC.
+# If the empty object file is linked in, GNU ld will treat the executable or
+# shared library as requiring an executable stack, and newer versions of GNU ld
+# will warn that "missing .note.GNU-stack section implies executable stack".
+# Therefore, we allow atomic_ops_sysdeps.o to be omitted from OBJS
+# when not required, which is usually the case.
+ifeq ($(BOEHM_NEED_ATOMIC_OPS_ASM),yes)
+OBJS+= atomic_ops_sysdeps.o
+endif
 
 CSRCS= reclaim.c allchblk.c misc.c alloc.c mach_dep.c os_dep.c mark_rts.c \
   headers.c mark.c obj_map.c blacklst.c finalize.c \
